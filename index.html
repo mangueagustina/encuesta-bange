@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Estudio Académico BANGE</title>
+  <link rel="icon" type="image/png" href="logo_encuesta.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" onload="this.onload=null;this.rel='stylesheet'" />
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" /></noscript>
+  <style>
+    /* ── Reset & tokens ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --white: #ffffff;
+      --gray-50: #f9fafb;
+      --gray-100: #f3f4f6;
+      --gray-200: #e5e7eb;
+      --gray-400: #9ca3af;
+      --gray-600: #4b5563;
+      --gray-700: #374151;
+      --gray-800: #1f2937;
+      --navy: #0f2d5e;
+      --navy-light: #1a3f7a;
+      --gold: #c9a227;
+      --success: #059669;
+      --error: #ef4444;
+      --radius: 14px;
+      --shadow: 0 2px 16px rgba(15,45,94,.07);
+      /* mobile-first topbar height */
+      --topbar-h: 56px;
+      --navbar-h: 72px;
+    }
+
+    html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--white);
+      color: var(--gray-800);
+      min-height: 100vh;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ════════════════════════════════
+       TOP BAR  (mobile-first)
+    ════════════════════════════════ */
+    .topbar {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: var(--white);
+      border-bottom: 1px solid var(--gray-200);
+      padding: 0 16px;
+      height: var(--topbar-h);
+      display: flex; align-items: center; justify-content: space-between;
+      box-shadow: 0 1px 8px rgba(0,0,0,.06);
+    }
+    .topbar-brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
+    .topbar-logo {
+      width: 32px; height: 32px; border-radius: 8px;
+      object-fit: contain; background: var(--navy);
+      padding: 3px; flex-shrink: 0;
+    }
+    .topbar-text { min-width: 0; }
+    .topbar-title { font-size: 13px; font-weight: 600; color: var(--navy); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .topbar-sub { font-size: 11px; color: var(--gray-400); }
+    #stepCounter { font-size: 12px; color: var(--gray-400); white-space: nowrap; flex-shrink: 0; }
+
+    /* ════════════════════════════════
+       PROGRESS BAR
+    ════════════════════════════════ */
+    .progress-wrap {
+      position: fixed; top: var(--topbar-h); left: 0; right: 0; z-index: 99;
+      height: 3px; background: var(--gray-100);
+    }
+    .progress-bar {
+      height: 100%; width: 0%;
+      background: linear-gradient(90deg, var(--navy), var(--gold));
+      transition: width .5s cubic-bezier(.4,0,.2,1);
+    }
+
+    /* ════════════════════════════════
+       MAIN LAYOUT
+    ════════════════════════════════ */
+    .main {
+      padding-top: calc(var(--topbar-h) + 3px);
+      min-height: 100vh;
+      display: flex; flex-direction: column; align-items: center;
+    }
+
+    /* ════════════════════════════════
+       INTRO SCREEN  (mobile-first)
+    ════════════════════════════════ */
+    .intro-screen {
+      width: 100%; max-width: 640px;
+      padding: 20px 16px calc(var(--navbar-h) + 16px);
+      display: flex; flex-direction: column; align-items: center; gap: 16px;
+    }
+    .intro-screen.hidden { display: none; }
+
+    .intro-hero {
+      text-align: center;
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+      border-radius: 20px;
+      padding: 32px 20px;
+      color: var(--white);
+      width: 100%;
+      position: relative; overflow: hidden;
+    }
+    .intro-hero::before {
+      content: ''; position: absolute; top: -50px; right: -50px;
+      width: 160px; height: 160px;
+      background: rgba(201,162,39,.15); border-radius: 50%;
+    }
+    .intro-hero::after {
+      content: ''; position: absolute; bottom: -30px; left: -30px;
+      width: 110px; height: 110px;
+      background: rgba(255,255,255,.05); border-radius: 50%;
+    }
+    .intro-logo {
+      width: 60px; height: 60px; border-radius: 14px;
+      object-fit: contain; background: rgba(255,255,255,.12);
+      padding: 7px; margin-bottom: 14px;
+      display: block; /* evita espacio inline extra */
+      margin-left: auto; margin-right: auto;
+    }
+    .intro-hero h1 {
+      font-size: clamp(17px, 5vw, 24px);
+      font-weight: 700; line-height: 1.3; margin-bottom: 6px;
+    }
+    .intro-hero .subtitle { font-size: 13px; opacity: .75; }
+    .gold-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--gold); color: var(--navy);
+      font-size: 11px; font-weight: 600;
+      padding: 5px 12px; border-radius: 20px; margin-top: 14px;
+    }
+
+    .intro-card {
+      background: var(--white);
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius);
+      padding: 18px;
+      width: 100%;
+      box-shadow: var(--shadow);
+    }
+    .intro-card h2 { font-size: 14px; font-weight: 600; color: var(--navy); margin-bottom: 8px; }
+    .intro-card p { font-size: 13px; color: var(--gray-600); line-height: 1.65; }
+
+    /* Pills: 2-column grid on mobile */
+    .intro-pills {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px; width: 100%;
+    }
+    .pill {
+      display: flex; align-items: center; gap: 8px;
+      background: var(--gray-50);
+      border: 1px solid var(--gray-200);
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 12px; color: var(--gray-600);
+    }
+    .pill .icon svg { width: 15px; height: 15px; flex-shrink: 0; }
+
+    /* Scale legend: 2-col grid on mobile */
+    .scale-legend {
+      width: 100%;
+      background: var(--gray-50);
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius);
+      padding: 16px;
+    }
+    .scale-legend h3 {
+      font-size: 11px; font-weight: 600; color: var(--gray-600);
+      margin-bottom: 10px; text-transform: uppercase; letter-spacing: .05em;
+    }
+    .scale-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+    }
+    .scale-item {
+      display: flex; align-items: center; gap: 8px;
+      background: var(--white); border: 1px solid var(--gray-200);
+      border-radius: 8px; padding: 7px 10px; font-size: 11px;
+    }
+    .scale-num {
+      width: 22px; height: 22px; border-radius: 5px;
+      background: var(--navy); color: var(--white);
+      font-size: 11px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .btn-start {
+      width: 100%; padding: 16px;
+      background: linear-gradient(135deg, var(--navy), var(--navy-light));
+      color: var(--white);
+      border: none; border-radius: var(--radius);
+      font-size: 15px; font-weight: 600;
+      cursor: pointer;
+      transition: transform .15s, box-shadow .15s;
+      box-shadow: 0 4px 20px rgba(15,45,94,.3);
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn-start:active { transform: scale(.98); }
+
+    /* ════════════════════════════════
+       SURVEY WRAP
+    ════════════════════════════════ */
+    .survey-wrap {
+      width: 100%; max-width: 640px;
+      padding: 20px 16px calc(var(--navbar-h) + 20px);
+      display: none;
+    }
+    .survey-wrap.active { display: block; }
+
+    /* ════════════════════════════════
+       SECTION ANIMATION
+    ════════════════════════════════ */
+    .section { display: none; animation: fadeSlide .3s ease; }
+    .section.active { display: block; }
+
+    @keyframes fadeSlide {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ════════════════════════════════
+       SECTION HEADER
+    ════════════════════════════════ */
+    .section-header {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 20px;
+    }
+    .section-icon {
+      width: 44px; height: 44px; border-radius: 12px;
+      background: linear-gradient(135deg, var(--navy), var(--navy-light));
+      color: var(--white);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .section-icon .icon svg { width: 22px; height: 22px; }
+    .section-meta { flex: 1; min-width: 0; }
+    .section-label {
+      font-size: 10px; font-weight: 600; text-transform: uppercase;
+      letter-spacing: .08em; color: var(--gold);
+    }
+    .section-title { font-size: 18px; font-weight: 700; color: var(--navy); }
+
+    /* ════════════════════════════════
+       STEP DOTS
+    ════════════════════════════════ */
+    .step-indicator {
+      display: flex; align-items: center; justify-content: center;
+      gap: 6px; margin-bottom: 20px;
+    }
+    .step-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--gray-200); transition: all .3s;
+    }
+    .step-dot.active { background: var(--navy); width: 20px; border-radius: 4px; }
+    .step-dot.done { background: var(--gold); }
+
+    /* ════════════════════════════════
+       QUESTION BLOCK
+    ════════════════════════════════ */
+    .q-block {
+      background: var(--white);
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 12px;
+      transition: border-color .2s, box-shadow .2s;
+    }
+    .q-block:focus-within {
+      border-color: var(--navy);
+      box-shadow: 0 0 0 3px rgba(15,45,94,.07);
+    }
+    .q-label {
+      font-size: 14px; font-weight: 500; color: var(--gray-800);
+      margin-bottom: 14px; display: flex; gap: 8px; align-items: flex-start;
+    }
+    .q-num {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 20px; height: 20px; border-radius: 5px;
+      background: var(--navy); color: var(--white);
+      font-size: 10px; font-weight: 700; flex-shrink: 0; margin-top: 2px;
+    }
+
+    /* ════════════════════════════════
+       RADIO OPTIONS
+    ════════════════════════════════ */
+    .radio-group { display: flex; flex-direction: column; gap: 8px; }
+    .radio-opt {
+      display: flex; align-items: center; gap: 12px;
+      padding: 13px 14px;
+      border: 1.5px solid var(--gray-200);
+      border-radius: 11px;
+      cursor: pointer;
+      transition: border-color .15s, background .15s;
+      font-size: 14px; color: var(--gray-700);
+      -webkit-tap-highlight-color: transparent;
+      /* bigger tap target on mobile */
+      min-height: 48px;
+    }
+    .radio-opt:active { background: var(--gray-50); }
+    .radio-opt input[type="radio"] { display: none; }
+    .radio-dot {
+      width: 20px; height: 20px; border-radius: 50%;
+      border: 2px solid var(--gray-300);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; transition: border-color .15s;
+    }
+    .radio-dot::after {
+      content: ''; width: 10px; height: 10px;
+      border-radius: 50%; background: var(--navy);
+      opacity: 0; transform: scale(0);
+      transition: opacity .15s, transform .15s;
+    }
+    .radio-opt input:checked ~ .radio-dot { border-color: var(--navy); }
+    .radio-opt input:checked ~ .radio-dot::after { opacity: 1; transform: scale(1); }
+    .radio-opt:has(input:checked) {
+      border-color: var(--navy);
+      background: rgba(15,45,94,.04);
+    }
+
+    /* ════════════════════════════════
+       SELECT
+    ════════════════════════════════ */
+    .q-select {
+      width: 100%; padding: 13px 14px;
+      border: 1.5px solid var(--gray-200); border-radius: 11px;
+      font-size: 14px; font-family: inherit; color: var(--gray-800);
+      background: var(--white);
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 14px center;
+      cursor: pointer; transition: border-color .15s;
+      min-height: 48px;
+    }
+    .q-select:focus { outline: none; border-color: var(--navy); box-shadow: 0 0 0 3px rgba(15,45,94,.07); }
+
+    /* ════════════════════════════════
+       TEXTAREA
+    ════════════════════════════════ */
+    .q-textarea {
+      width: 100%; padding: 12px 14px;
+      border: 1.5px solid var(--gray-200); border-radius: 11px;
+      font-size: 14px; font-family: inherit; color: var(--gray-800);
+      resize: vertical; min-height: 88px;
+      transition: border-color .15s;
+    }
+    .q-textarea:focus { outline: none; border-color: var(--navy); box-shadow: 0 0 0 3px rgba(15,45,94,.07); }
+    .q-textarea::placeholder { color: var(--gray-400); }
+
+    /* ════════════════════════════════
+       LIKERT  — mobile: stacked layout
+    ════════════════════════════════ */
+    .likert-wrap { margin-top: 4px; }
+
+    /* Mobile: hide the column header, show stacked rows */
+    .likert-header { display: none; }
+
+    .likert-row {
+      display: flex; flex-direction: column;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--gray-100);
+      gap: 10px;
+    }
+    .likert-row:last-child { border-bottom: none; }
+    .likert-row.has-error .likert-text { color: var(--error); }
+    .likert-row.has-error .likert-cell label { border-color: #fca5a5; }
+
+    .likert-text { font-size: 13px; color: var(--gray-700); line-height: 1.4; }
+
+    /* 5 buttons spread full width */
+    .likert-radios {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 6px;
+    }
+    .likert-cell { display: flex; justify-content: center; }
+    .likert-cell input[type="radio"] { display: none; }
+    .likert-cell label {
+      width: 100%; min-height: 44px;
+      border-radius: 10px;
+      border: 1.5px solid var(--gray-200);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 500; color: var(--gray-500);
+      cursor: pointer;
+      transition: all .15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .likert-cell label:active { background: var(--gray-50); }
+    .likert-cell input:checked + label {
+      background: var(--navy); border-color: var(--navy);
+      color: var(--white); font-weight: 700;
+    }
+
+    .likert-scale-hint {
+      display: flex; justify-content: space-between;
+      padding: 8px 0 0;
+      font-size: 10px; color: var(--gray-400);
+    }
+
+    /* ════════════════════════════════
+       NAVIGATION BAR
+    ════════════════════════════════ */
+    .nav-bar {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: var(--white);
+      border-top: 1px solid var(--gray-200);
+      padding: 12px 16px;
+      padding-bottom: max(12px, env(safe-area-inset-bottom));
+      display: flex; gap: 10px; justify-content: center;
+      box-shadow: 0 -2px 16px rgba(0,0,0,.06);
+    }
+    .nav-bar.hidden { display: none; }
+    .btn-nav {
+      flex: 1; max-width: 220px;
+      padding: 14px 12px;
+      border-radius: 12px; border: none;
+      font-size: 14px; font-weight: 600;
+      cursor: pointer; transition: all .15s;
+      display: flex; align-items: center; justify-content: center; gap: 7px;
+      -webkit-tap-highlight-color: transparent;
+      min-height: 48px;
+    }
+    .btn-back { background: var(--gray-100); color: var(--gray-600); }
+    .btn-back:active { background: var(--gray-200); }
+    .btn-next {
+      background: linear-gradient(135deg, var(--navy), var(--navy-light));
+      color: var(--white);
+      box-shadow: 0 4px 14px rgba(15,45,94,.25);
+    }
+    .btn-next:active { transform: scale(.98); }
+    .btn-submit {
+      background: linear-gradient(135deg, var(--success), #047857);
+      color: var(--white);
+      box-shadow: 0 4px 14px rgba(5,150,105,.3);
+    }
+    .btn-submit:active { transform: scale(.98); }
+    .btn-nav .icon svg { width: 16px; height: 16px; }
+
+    /* ════════════════════════════════
+       SUCCESS SCREEN
+    ════════════════════════════════ */
+    .success-screen {
+      display: none; flex-direction: column; align-items: center;
+      text-align: center; padding: 60px 20px;
+      max-width: 440px; margin: 0 auto;
+    }
+    .success-screen.active { display: flex; }
+    .success-icon {
+      width: 88px; height: 88px; border-radius: 50%;
+      background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 24px;
+      animation: popIn .5s cubic-bezier(.175,.885,.32,1.275);
+    }
+    .success-icon .icon svg { width: 48px; height: 48px; }
+    @keyframes popIn {
+      from { transform: scale(0); opacity: 0; }
+      to   { transform: scale(1); opacity: 1; }
+    }
+    .success-screen h2 { font-size: 22px; font-weight: 700; color: var(--navy); margin-bottom: 10px; }
+    .success-screen p { font-size: 14px; color: var(--gray-600); line-height: 1.7; }
+
+    /* ════════════════════════════════
+       SVG ICON HELPER
+    ════════════════════════════════ */
+    .icon { display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .icon svg { display: block; }
+    .gold-badge .icon svg { width: 13px; height: 13px; }
+    .btn-start .icon svg { width: 17px; height: 17px; }
+
+    /* ════════════════════════════════
+       ERROR STATES
+    ════════════════════════════════ */
+    .q-block.has-error {
+      border-color: var(--error);
+      box-shadow: 0 0 0 3px rgba(239,68,68,.09);
+      animation: shake .35s cubic-bezier(.36,.07,.19,.97);
+    }
+    @keyframes shake {
+      0%,100% { transform: translateX(0); }
+      20% { transform: translateX(-5px); }
+      40% { transform: translateX(5px); }
+      60% { transform: translateX(-3px); }
+      80% { transform: translateX(3px); }
+    }
+    .q-block.has-error .q-label { color: var(--error); }
+    .error-msg {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 12px; color: var(--error); margin-top: 10px; font-weight: 500;
+    }
+    .error-msg svg { flex-shrink: 0; }
+    .q-select.has-error { border-color: var(--error); box-shadow: 0 0 0 3px rgba(239,68,68,.09); }
+
+    /* ════════════════════════════════
+       TOAST
+    ════════════════════════════════ */
+    #toast {
+      position: fixed; bottom: calc(var(--navbar-h) + 8px); left: 50%;
+      transform: translateX(-50%) translateY(6px);
+      background: #1f2937; color: #fff;
+      padding: 11px 16px; border-radius: 12px;
+      font-size: 13px; font-weight: 500;
+      z-index: 9999; box-shadow: 0 6px 20px rgba(0,0,0,.22);
+      display: flex; align-items: center; gap: 9px;
+      max-width: calc(100vw - 32px); text-align: left;
+      opacity: 0; pointer-events: none;
+      transition: opacity .22s, transform .22s;
+    }
+    #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    #toast.toast-error { background: #7f1d1d; border-left: 3px solid var(--error); }
+    #toast.toast-success { background: #064e3b; border-left: 3px solid #10b981; }
+    #toast .toast-icon { flex-shrink: 0; }
+
+    /* ════════════════════════════════
+       TABLET  ≥ 600px
+    ════════════════════════════════ */
+    @media (min-width: 600px) {
+      :root { --topbar-h: 60px; }
+
+      .topbar { padding: 0 24px; }
+      .topbar-logo { width: 36px; height: 36px; }
+      .topbar-title { font-size: 14px; }
+
+      .intro-screen { padding: 28px 24px calc(var(--navbar-h) + 20px); gap: 20px; }
+      .intro-hero { padding: 40px 32px; }
+      .intro-logo { width: 68px; height: 68px; }
+      .intro-card { padding: 22px 24px; }
+      .intro-card h2 { font-size: 15px; }
+      .intro-card p { font-size: 14px; }
+
+      .intro-pills { grid-template-columns: repeat(4, 1fr); }
+      .scale-row { grid-template-columns: repeat(3, 1fr); }
+
+      .survey-wrap { padding: 28px 24px calc(var(--navbar-h) + 24px); }
+      .q-block { padding: 20px; }
+      .section-title { font-size: 19px; }
+
+      /* Likert: inline layout on tablet+ */
+      .likert-header {
+        display: flex; align-items: center;
+        padding: 0 0 10px;
+        border-bottom: 1px solid var(--gray-200);
+        margin-bottom: 4px;
+      }
+      .likert-header .lh-text { flex: 1; font-size: 11px; color: var(--gray-400); }
+      .likert-header .lh-scale { display: flex; gap: 4px; }
+      .lh-num { width: 44px; text-align: center; font-size: 11px; font-weight: 600; color: var(--gray-400); }
+
+      .likert-row { flex-direction: row; align-items: center; gap: 8px; padding: 10px 0; }
+      .likert-text { flex: 1; }
+      .likert-radios { display: flex; gap: 4px; flex-shrink: 0; }
+      .likert-cell { width: 44px; }
+      .likert-cell label { width: 36px; height: 36px; min-height: unset; }
+
+      .nav-bar { padding: 14px 24px; }
+      .btn-nav { font-size: 15px; padding: 14px 16px; }
+    }
+
+    /* ════════════════════════════════
+       DESKTOP  ≥ 900px
+    ════════════════════════════════ */
+    @media (min-width: 900px) {
+      :root { --topbar-h: 64px; }
+
+      .topbar { padding: 0 32px; }
+      .topbar-logo { width: 40px; height: 40px; }
+      .topbar-title { font-size: 15px; }
+
+      .intro-screen { padding: 40px 24px calc(var(--navbar-h) + 24px); gap: 24px; }
+      .intro-hero { padding: 48px 40px; border-radius: 24px; }
+      .intro-logo { width: 72px; height: 72px; }
+      .intro-card { padding: 28px 32px; }
+      .intro-card h2 { font-size: 16px; }
+
+      .scale-row { grid-template-columns: repeat(5, 1fr); }
+
+      .survey-wrap { padding: 36px 24px calc(var(--navbar-h) + 28px); }
+      .q-block { padding: 24px; margin-bottom: 16px; }
+      .section-title { font-size: 20px; }
+      .q-label { font-size: 14px; }
+
+      .btn-start:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(15,45,94,.4); }
+      .btn-next:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(15,45,94,.35); }
+      .btn-submit:hover { transform: translateY(-1px); }
+      .btn-back:hover { background: var(--gray-200); }
+
+      .nav-bar { padding: 16px 32px; }
+      .btn-nav { max-width: 220px; }
+    }
+
+    /* ════════════════════════════════
+       WIDE DESKTOP  ≥ 1200px
+    ════════════════════════════════ */
+    @media (min-width: 1200px) {
+      .intro-screen,
+      .survey-wrap { padding-left: 0; padding-right: 0; }
+    }
+
+    /* ════════════════════════════════
+       FOCUS VISIBLE (teclado)
+    ════════════════════════════════ */
+    .btn-nav:focus-visible,
+    .btn-start:focus-visible,
+    .radio-opt:focus-within,
+    .q-select:focus-visible,
+    .q-textarea:focus-visible {
+      outline: 3px solid var(--gold);
+      outline-offset: 2px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top bar -->
+  <header class="topbar">
+    <div class="topbar-brand">
+      <img src="logo_encuesta.png" alt="BANGE" class="topbar-logo" width="32" height="32" />
+      <div class="topbar-text">
+        <div class="topbar-title">ENCUESTA</div>
+        <div class="topbar-sub">Evaluación Institucional</div>
+      </div>
+    </div>
+    <div id="stepCounter" style="display:none"></div>
+  </header>
+
+  <!-- Progress bar -->
+  <div class="progress-wrap">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+
+  <main class="main">
+
+    <!-- ══════════════════════════════════════
+         PANTALLA DE INTRODUCCIÓN
+    ══════════════════════════════════════ -->
+    <div class="intro-screen" id="introScreen">
+
+      <div class="intro-hero">
+        <img src="logo_encuesta.png" alt="BANGE" class="intro-logo" width="60" height="60" loading="lazy" />
+        <h1>EVALUACIÓN DEL FORTALECIMIENTO INSTITUCIONAL DE BANGE</h1>
+        <p class="subtitle">Período 2020 – 2025</p>
+        <span class="gold-badge">
+          <span class="icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/></svg></span>
+          Estudio Académico · AAUCA
+        </span>
+      </div>
+
+      <div class="intro-card">
+        <h2>Sobre esta encuesta</h2>
+        <p>Estudio desarrollado por <strong>Agustina Mangue Nguema</strong> para su Trabajo de Fin de Grado en Administración de Empresas (AAUCA). Analiza la percepción de empleados, clientes y especialistas sobre la modernización y transformación digital de BANGE durante 2020–2025.</p>
+      </div>
+
+      <div class="intro-pills">
+        <div class="pill">
+          <span class="icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
+          Anónima y confidencial
+        </div>
+        <div class="pill">
+          <span class="icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></span>
+          Fines académicos
+        </div>
+        <div class="pill">
+          <span class="icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span>
+          ~8 minutos
+        </div>
+        <div class="pill">
+          <span class="icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>
+          Voluntaria
+        </div>
+      </div>
+
+      <div class="scale-legend">
+        <h3>Escala de valoración</h3>
+        <div class="scale-row">
+          <div class="scale-item"><div class="scale-num">1</div> Totalmente en desacuerdo</div>
+          <div class="scale-item"><div class="scale-num">2</div> En desacuerdo</div>
+          <div class="scale-item"><div class="scale-num">3</div> Neutral</div>
+          <div class="scale-item"><div class="scale-num">4</div> De acuerdo</div>
+          <div class="scale-item"><div class="scale-num">5</div> Totalmente de acuerdo</div>
+        </div>
+      </div>
+
+      <button class="btn-start" onclick="startSurvey()">
+        Comenzar encuesta
+        <span class="icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+      </button>
+
+    </div>
+
+    <!-- ══════════════════════════════════════
+         FORMULARIO
+    ══════════════════════════════════════ -->
+    <div class="survey-wrap" id="surveyWrap">
+      <form id="form" novalidate>
+
+        <div class="step-indicator" id="stepDots"></div>
+
+        <!-- ── SECCIÓN I ── -->
+        <div class="section active" data-sec="1">
+          <div class="section-header">
+            <div class="section-icon"><span class="icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span></div>
+            <div class="section-meta">
+              <div class="section-label">Sección I</div>
+              <div class="section-title">Información General</div>
+            </div>
+          </div>
+
+          <div class="q-block">
+            <div class="q-label"><span class="q-num">1</span> Tipo de participante</div>
+            <div class="radio-group">
+              <label class="radio-opt"><input type="radio" name="p1" value="Empleado de BANGE" required /><span class="radio-dot"></span> Empleado de BANGE</label>
+              <label class="radio-opt"><input type="radio" name="p1" value="Cliente de BANGE" /><span class="radio-dot"></span> Cliente de BANGE</label>
+              <label class="radio-opt"><input type="radio" name="p1" value="Experto del sector financiero" /><span class="radio-dot"></span> Experto del sector financiero</label>
+            </div>
+          </div>
+
+          <div class="q-block">
+            <div class="q-label"><span class="q-num">2</span> Género</div>
+            <div class="radio-group">
+              <label class="radio-opt"><input type="radio" name="p2" value="Masculino" required /><span class="radio-dot"></span> Masculino</label>
+              <label class="radio-opt"><input type="radio" name="p2" value="Femenino" /><span class="radio-dot"></span> Femenino</label>
+              <label class="radio-opt"><input type="radio" name="p2" value="Prefiero no decir" /><span class="radio-dot"></span> Prefiero no decir</label>
+            </div>
+          </div>
+
+          <div class="q-block">
+            <div class="q-label"><span class="q-num">3</span> Rango de edad</div>
+            <div class="radio-group">
+              <label class="radio-opt"><input type="radio" name="p3" value="18-30" required /><span class="radio-dot"></span> 18 – 30 años</label>
+              <label class="radio-opt"><input type="radio" name="p3" value="31-45" /><span class="radio-dot"></span> 31 – 45 años</label>
+              <label class="radio-opt"><input type="radio" name="p3" value="46-60" /><span class="radio-dot"></span> 46 – 60 años</label>
+              <label class="radio-opt"><input type="radio" name="p3" value="60+" /><span class="radio-dot"></span> Más de 60 años</label>
+            </div>
+          </div>
+
+          <div class="q-block">
+            <div class="q-label"><span class="q-num">4</span> Nivel educativo</div>
+            <select name="p4" class="q-select" required>
+              <option value="">Seleccione una opción</option>
+              <option>Educación secundaria</option>
+              <option>Formación técnica o profesional</option>
+              <option>Licenciatura / Grado universitario</option>
+              <option>Postgrado (Máster / Doctorado)</option>
+            </select>
+          </div>
+
+          <div class="q-block">
+            <div class="q-label"><span class="q-num">5</span> Provincia de residencia</div>
+            <select name="p5" class="q-select" required>
+              <option value="">Seleccione una provincia</option>
+              <option>Bioko Norte (Malabo)</option>
+              <option>Bioko Sur</option>
+              <option>Litoral (Bata)</option>
+              <option>Centro Sur</option>
+              <option>Kié-Ntem</option>
+              <option>Wele-Nzas</option>
+              <option>Annobón</option>
+              <option>Djibloho</option>
+            </select>
+          </div>
+
+          <div class="q-block">
+            <div class="q-label"><span class="q-num">6</span> Años de relación con BANGE</div>
+            <div class="radio-group">
+              <label class="radio-opt"><input type="radio" name="p6" value="2-5" required /><span class="radio-dot"></span> 2 – 5 años</label>
+              <label class="radio-opt"><input type="radio" name="p6" value="6-10" /><span class="radio-dot"></span> 6 – 10 años</label>
+              <label class="radio-opt"><input type="radio" name="p6" value="10+" /><span class="radio-dot"></span> Más de 10 años</label>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── SECCIÓN II ── -->
+        <div class="section" data-sec="2">
+          <div class="section-header">
+            <div class="section-icon"><span class="icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></span></div>
+            <div class="section-meta">
+              <div class="section-label">Sección II · Solo empleados</div>
+              <div class="section-title">Capital Humano</div>
+            </div>
+          </div>
+
+          <div class="q-block">
+            <div class="q-label"><span class="q-num">7–13</span> Indique su nivel de acuerdo con cada afirmación</div>
+            <div class="likert-wrap">
+              <div class="likert-header">
+                <div class="lh-text">Afirmación</div>
+                <div class="lh-scale">
+                  <div class="lh-num">1</div><div class="lh-num">2</div><div class="lh-num">3</div><div class="lh-num">4</div><div class="lh-num">5</div>
+                </div>
+              </div>
+              <div id="likert-ch"></div>
+            </div>
+            <div class="likert-scale-hint"><span>Totalmente en desacuerdo</span><span>Totalmente de acuerdo</span></div>
+          </div>
+
+          <div class="q-block">
+            <div class="q-label"><span class="q-num">14</span> Áreas de formación que considera prioritario fortalecer</div>
+            <textarea name="p14" class="q-textarea" placeholder="Escriba su respuesta aquí..."></textarea>
+          </div>
+        </div>
+
+        <!-- ── SECCIÓN III ── -->
+        <div class="section" data-sec="3">
+          <div class="section-header">
+            <div class="section-icon"><span class="icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></span></div>
+            <div class="section-meta">
+              <div class="section-label">Sección III</div>
+              <div class="section-title">Transformación Digital</div>
+            </div>
+          </div>
+
+          <div class="q-block">
+            <div class="q-label"><span class="q-num">15</span> ¿Utiliza los servicios de banca digital de BANGE?</div>
+            <div class="radio-group">
+              <label class="radio-opt"><input type="radio" name="p15" value="Sí, frecuentemente" required /><span class="radio-dot"></span> Sí, frecuentemente</label>
+              <label class="radio-opt"><input type="radio" name="p15" value="Sí, ocasionalmente" /><span class="radio-dot"></span> Sí, ocasionalmente</label>
+              <label class="radio-opt"><input type="radio" name="p15" value="No, pero conozco los servicios" /><span class="radio-dot"></span> No, pero conozco los servicios</label>
+              <label class="radio-opt"><input type="radio" name="p15" value="No, y los desconozco" /><span class="radio-dot"></span> No, y los desconozco</label>
+            </div>
+          </div>
+
+          <div id="bloque-digital" style="display:none">
+            <div class="q-block">
+              <div class="q-label"><span class="q-num">16–22</span> Indique su nivel de acuerdo</div>
+              <div class="likert-wrap">
+                <div class="likert-header">
+                  <div class="lh-text">Afirmación</div>
+                  <div class="lh-scale">
+                    <div class="lh-num">1</div><div class="lh-num">2</div><div class="lh-num">3</div><div class="lh-num">4</div><div class="lh-num">5</div>
+                  </div>
+                </div>
+                <div id="likert-td"></div>
+              </div>
+              <div class="likert-scale-hint"><span>Totalmente en desacuerdo</span><span>Totalmente de acuerdo</span></div>
+            </div>
+          </div>
+
+          <div class="q-block">
+            <div class="q-label"><span class="q-num">23</span> Funcionalidades digitales que le gustaría ver añadidas</div>
+            <textarea name="p23" class="q-textarea" placeholder="Escriba su respuesta aquí..."></textarea>
+          </div>
+        </div>
+
+        <!-- ── SECCIÓN IV ── -->
+        <div class="section" data-sec="4">
+          <div class="section-header">
+            <div class="section-icon"><span class="icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span></div>
+            <div class="section-meta">
+              <div class="section-label">Sección IV</div>
+              <div class="section-title">Gobernanza Corporativa</div>
+            </div>
+          </div>
+
+          <div class="q-block">
+            <div class="q-label"><span class="q-num">24–30</span> Indique su nivel de acuerdo</div>
+            <div class="likert-wrap">
+              <div class="likert-header">
+                <div class="lh-text">Afirmación</div>
+                <div class="lh-scale">
+                  <div class="lh-num">1</div><div class="lh-num">2</div><div class="lh-num">3</div><div class="lh-num">4</div><div class="lh-num">5</div>
+                </div>
+              </div>
+              <div id="likert-gc"></div>
+            </div>
+            <div class="likert-scale-hint"><span>Totalmente en desacuerdo</span><span>Totalmente de acuerdo</span></div>
+          </div>
+        </div>
+
+        <!-- ── SECCIÓN V ── -->
+        <div class="section" data-sec="5">
+          <div class="section-header">
+            <div class="section-icon"><span class="icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="22" x2="21" y2="22"/><rect x="2" y="9" width="4" height="13"/><rect x="10" y="5" width="4" height="17"/><rect x="18" y="2" width="4" height="20"/></svg></span></div>
+            <div class="section-meta">
+              <div class="section-label">Sección V</div>
+              <div class="section-title">Expansión Operativa</div>
+            </div>
+          </div>
+
+          <div class="q-block">
+            <div class="q-label"><span class="q-num">31–36</span> Indique su nivel de acuerdo</div>
+            <div class="likert-wrap">
+              <div class="likert-header">
+                <div class="lh-text">Afirmación</div>
+                <div class="lh-scale">
+                  <div class="lh-num">1</div><div class="lh-num">2</div><div class="lh-num">3</div><div class="lh-num">4</div><div class="lh-num">5</div>
+                </div>
+              </div>
+              <div id="likert-eo"></div>
+            </div>
+            <div class="likert-scale-hint"><span>Totalmente en desacuerdo</span><span>Totalmente de acuerdo</span></div>
+          </div>
+        </div>
+
+        <!-- ── SECCIÓN VI ── -->
+        <div class="section" data-sec="6">
+          <div class="section-header">
+            <div class="section-icon"><span class="icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span></div>
+            <div class="section-meta">
+              <div class="section-label">Sección VI · Última sección</div>
+              <div class="section-title">Valoración Global</div>
+            </div>
+          </div>
+
+          <div class="q-block">
+            <div class="q-label"><span class="q-num">37</span> Valoración general del proceso de modernización (2020–2025)</div>
+            <div class="radio-group">
+              <label class="radio-opt"><input type="radio" name="p37" value="Muy positiva" required /><span class="radio-dot"></span> Muy positiva</label>
+              <label class="radio-opt"><input type="radio" name="p37" value="Positiva" /><span class="radio-dot"></span> Positiva</label>
+              <label class="radio-opt"><input type="radio" name="p37" value="Neutral" /><span class="radio-dot"></span> Neutral</label>
+              <label class="radio-opt"><input type="radio" name="p37" value="Negativa" /><span class="radio-dot"></span> Negativa</label>
+              <label class="radio-opt"><input type="radio" name="p37" value="Muy negativa" /><span class="radio-dot"></span> Muy negativa</label>
+            </div>
+          </div>
+
+          <div class="q-block">
+            <div class="q-label"><span class="q-num">38</span> Avance más significativo de BANGE en este período</div>
+            <div class="radio-group">
+              <label class="radio-opt"><input type="radio" name="p38" value="Capacitación del personal" required /><span class="radio-dot"></span> Capacitación del personal</label>
+              <label class="radio-opt"><input type="radio" name="p38" value="Transformación digital" /><span class="radio-dot"></span> Transformación digital</label>
+              <label class="radio-opt"><input type="radio" name="p38" value="Gobernanza institucional" /><span class="radio-dot"></span> Gobernanza institucional</label>
+              <label class="radio-opt"><input type="radio" name="p38" value="Expansión de servicios" /><span class="radio-dot"></span> Expansión de servicios</label>
+              <label class="radio-opt"><input type="radio" name="p38" value="Otro" /><span class="radio-dot"></span> Otro</label>
+            </div>
+          </div>
+
+          <div class="q-block">
+            <div class="q-label"><span class="q-num">39</span> Principal desafío pendiente</div>
+            <div class="radio-group">
+              <label class="radio-opt"><input type="radio" name="p39" value="Formación del personal" required /><span class="radio-dot"></span> Formación del personal</label>
+              <label class="radio-opt"><input type="radio" name="p39" value="Mejora de servicios digitales" /><span class="radio-dot"></span> Mejora de servicios digitales</label>
+              <label class="radio-opt"><input type="radio" name="p39" value="Transparencia y comunicación" /><span class="radio-dot"></span> Transparencia y comunicación</label>
+              <label class="radio-opt"><input type="radio" name="p39" value="Cobertura territorial" /><span class="radio-dot"></span> Cobertura territorial</label>
+              <label class="radio-opt"><input type="radio" name="p39" value="Reducción de tiempos de espera" /><span class="radio-dot"></span> Reducción de tiempos de espera</label>
+              <label class="radio-opt"><input type="radio" name="p39" value="Otro" /><span class="radio-dot"></span> Otro</label>
+            </div>
+          </div>
+
+          <div class="q-block">
+            <div class="q-label"><span class="q-num">40</span> Comentarios o sugerencias <span style="font-size:12px;color:var(--gray-400);font-weight:400">(opcional)</span></div>
+            <textarea name="p40" class="q-textarea" placeholder="Comparta cualquier observación adicional..."></textarea>
+          </div>
+        </div>
+
+      </form>
+    </div>
+
+    <!-- ══════════════════════════════════════
+         PANTALLA DE ÉXITO
+    ══════════════════════════════════════ -->
+    <div class="success-screen" id="successScreen">
+      <div class="success-icon">
+        <span class="icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></span>
+      </div>
+      <h2>¡Gracias por su participación!</h2>
+      <p>Sus respuestas han sido registradas correctamente.<br/>
+      La información será utilizada exclusivamente con fines académicos,
+      garantizando en todo momento la confidencialidad de sus datos.</p>
+    </div>
+
+  </main>
+
+  <!-- Navigation bar -->
+  <div class="nav-bar hidden" id="navBar">
+    <button class="btn-nav btn-back" id="btnBack" onclick="back()">
+      <span class="icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></span>
+      Anterior
+    </button>
+    <button class="btn-nav btn-next" id="btnNext" onclick="next()">
+      Siguiente
+      <span class="icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+    </button>
+  </div>
+
+  <script src="script.js" defer></script>
+</body>
+</html>

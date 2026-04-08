@@ -1,0 +1,469 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard — Encuesta BANGE 2020-2025</title>
+  <link rel="icon" type="image/png" href="logo_encuesta.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" onload="this.onload=null;this.rel='stylesheet'" />
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" /></noscript>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }     :root {       --navy:#0f2d5e; --navy-light:#1a3f7a; --gold:#c9a227;       --success:#059669; --white:#fff;       --gray-50:#f9fafb; --gray-100:#f3f4f6; --gray-200:#e5e7eb;       --gray-400:#9ca3af; --gray-600:#4b5563; --gray-700:#374151; --gray-800:#1f2937;       --radius:12px; --shadow:0 2px 12px rgba(15,45,94,.06);       --topbar-h:56px;     }     html { scroll-behavior:smooth; -webkit-text-size-adjust:100%; }     body { font-family:'Inter',sans-serif; background:var(--gray-50); color:var(--gray-800); min-height:100vh; -webkit-font-smoothing:antialiased; line-height:1.6; }      /* ── TOPBAR (mobile-first) ── */     .topbar {       position:fixed; top:0; left:0; right:0; z-index:100;       height:var(--topbar-h); background:var(--white);       border-bottom:1px solid var(--gray-200);       padding:0 16px; display:flex; align-items:center; justify-content:space-between;       box-shadow:0 1px 6px rgba(0,0,0,.05);     }     .topbar-brand { display:flex; align-items:center; gap:10px; min-width:0; }     .topbar-logo { width:32px; height:32px; border-radius:8px; object-fit:contain; background:var(--navy); padding:3px; flex-shrink:0; }     .topbar-text { min-width:0; }     .topbar-title { font-size:13px; font-weight:700; color:var(--navy); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }     .topbar-sub { font-size:10px; color:var(--gray-400); }     .topbar-actions { display:flex; align-items:center; gap:8px; }     .btn-refresh {       display:flex; align-items:center; gap:4px;       padding:6px 12px; border-radius:8px; border:none;       background:var(--navy); color:var(--white);       font-size:12px; font-weight:600; cursor:pointer; transition:background .15s;       -webkit-tap-highlight-color:transparent; min-height:40px;     }     .btn-refresh:active { background:var(--navy-light); }     .btn-refresh svg { width:13px; height:13px; flex-shrink:0; }     .topbar-link {       display:flex; align-items:center; gap:4px;       padding:6px 10px; border-radius:8px;       border:1.5px solid var(--gray-200);       color:var(--gray-600); font-size:11px; font-weight:500;       text-decoration:none; transition:border-color .15s,color .15s;       -webkit-tap-highlight-color:transparent; min-height:40px;     }     .topbar-link:active { border-color:var(--navy); color:var(--navy); }     .topbar-link svg { width:12px; height:12px; }     #lastUpdate { font-size:10px; color:var(--gray-400); display:none; }      /* ── LAYOUT ── */     .main { padding:calc(var(--topbar-h) + 16px) 16px 32px; }      /* ── STATE SCREEN ── */     #stateScreen {       display:flex; flex-direction:column; align-items:center; justify-content:center;       min-height:50vh; gap:12px; text-align:center; padding:20px;     }     .spinner {       width:36px; height:36px; border:3px solid var(--gray-200);       border-top-color:var(--navy); border-radius:50%;       animation:spin .8s linear infinite;     }     @keyframes spin { to { transform:rotate(360deg); } }     #stateScreen h2 { font-size:18px; font-weight:700; color:var(--navy); }     #stateScreen p { font-size:13px; color:var(--gray-600); max-width:300px; line-height:1.5; }      /* ── KPI GRID (mobile: 2 cols) ── */     .kpi-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:20px; }     .kpi-card {       background:var(--white); border:1px solid var(--gray-200);       border-radius:var(--radius); padding:14px 12px;       box-shadow:var(--shadow); position:relative; overflow:hidden;     }     .kpi-card::before {       content:''; position:absolute; top:0; left:0; right:0; height:2px;       background:linear-gradient(90deg,var(--navy),var(--gold));     }     .kpi-label { font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:.05em; color:var(--gray-400); margin-bottom:6px; }     .kpi-value { font-size:28px; font-weight:700; color:var(--navy); line-height:1; }     .kpi-sub { font-size:11px; color:var(--gray-400); margin-top:4px; }     .kpi-icon { position:absolute; right:10px; top:50%; transform:translateY(-50%); opacity:.05; }     .kpi-icon svg { width:48px; height:48px; }      /* ── SECTION TITLE ── */     .sec-title {       font-size:11px; font-weight:700; text-transform:uppercase;       letter-spacing:.07em; color:var(--gold);       margin:24px 0 12px; display:flex; align-items:center; gap:8px;     }     .sec-title::after { content:''; flex:1; height:1px; background:var(--gray-200); }      /* ── CHART GRID (mobile: 1 col) ── */     .grid-1 { display:grid; grid-template-columns:1fr; gap:14px; }     .grid-2 { display:grid; grid-template-columns:1fr; gap:14px; }     .grid-3 { display:grid; grid-template-columns:1fr; gap:14px; }      /* ── CHART CARD ── */     .chart-card {       background:var(--white); border:1px solid var(--gray-200);       border-radius:var(--radius); padding:14px 12px; box-shadow:var(--shadow);     }     .card-head { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:12px; gap:8px; }     .card-title { font-size:13px; font-weight:600; color:var(--gray-800); }     .card-sub { font-size:11px; color:var(--gray-400); margin-top:2px; }     .card-badge {       font-size:9px; font-weight:600; padding:2px 7px; border-radius:16px;       background:var(--gray-100); color:var(--gray-600); white-space:nowrap; flex-shrink:0;     }     .chart-wrap { position:relative; }     .chart-wrap canvas { max-height:200px; }     .chart-wrap-md canvas { max-height:240px; }     .chart-wrap-lg canvas { max-height:280px; }      /* ── PROGRESS BARS ── */     .pbar-list { display:flex; flex-direction:column; gap:10px; }     .pbar-item { display:flex; flex-direction:column; gap:3px; }     .pbar-label { font-size:11px; color:var(--gray-700); display:flex; justify-content:space-between; }     .pbar-label span { font-weight:600; color:var(--navy); }     .pbar-track { height:6px; background:var(--gray-100); border-radius:3px; overflow:hidden; }     .pbar-fill { height:100%; border-radius:3px; background:linear-gradient(90deg,var(--navy),var(--gold)); transition:width .6s ease; }      /* ── TABLES ── */     .table-wrap { overflow-x:auto; }     .data-table { width:100%; border-collapse:collapse; font-size:12px; }     .data-table thead { background:var(--gray-100); }     .data-table th { padding:10px; text-align:left; font-weight:600; color:var(--gray-700); border-bottom:2px solid var(--gray-200); }     .data-table td { padding:10px; border-bottom:1px solid var(--gray-200); color:var(--gray-700); }     .data-table tbody tr:hover { background:var(--gray-50); }     .data-table tbody tr:last-child td { border-bottom:none; }     .table-empty { text-align:center; padding:20px; color:var(--gray-400); font-size:12px; }      /* ── COMMENTS ── */     .comments-list { display:flex; flex-direction:column; gap:8px; max-height:280px; overflow-y:auto; padding-right:2px; }     .comment-item {       background:var(--gray-50); border:1px solid var(--gray-200);       border-left:3px solid var(--gold);       border-radius:8px; padding:10px 11px;       font-size:12px; color:var(--gray-700); line-height:1.5;     }     .empty-state { text-align:center; padding:24px 12px; color:var(--gray-400); font-size:12px; }      /* ── TABLET ≥ 600px ── */     @media (min-width:600px) {       :root { --topbar-h:60px; }       .topbar { padding:0 24px; }       .topbar-logo { width:36px; height:36px; }       .topbar-title { font-size:14px; }       #lastUpdate { display:inline; }       .main { padding:calc(var(--topbar-h) + 20px) 24px 40px; }       .kpi-grid { grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:14px; }       .kpi-card { padding:16px 14px; }       .kpi-value { font-size:32px; }       .grid-2 { grid-template-columns:repeat(2,1fr); }       .grid-3 { grid-template-columns:repeat(2,1fr); }       .chart-wrap canvas { max-height:220px; }       .chart-wrap-md canvas { max-height:260px; }       .chart-wrap-lg canvas { max-height:300px; }       .data-table { font-size:13px; }       .data-table th, .data-table td { padding:12px; }     }      /* ── DESKTOP ≥ 900px ── */     @media (min-width:900px) {       :root { --topbar-h:64px; }       .topbar { padding:0 32px; }       .topbar-logo { width:40px; height:40px; }       .topbar-title { font-size:15px; }       .main { padding:calc(var(--topbar-h) + 28px) 32px 48px; max-width:1400px; margin:0 auto; }       .kpi-grid { grid-template-columns:repeat(5,1fr); gap:16px; margin-bottom:28px; }       .kpi-card { padding:18px 16px; }       .kpi-value { font-size:36px; }       .sec-title { margin:32px 0 16px; font-size:12px; }       .grid-2 { grid-template-columns:repeat(2,1fr); }       .grid-3 { grid-template-columns:repeat(3,1fr); }       .chart-card { padding:18px 16px; }       .card-title { font-size:14px; }       .chart-wrap canvas { max-height:240px; }       .chart-wrap-md canvas { max-height:280px; }       .chart-wrap-lg canvas { max-height:340px; }       .btn-refresh:hover { background:var(--navy-light); }       .topbar-link:hover { border-color:var(--navy); color:var(--navy); }       .data-table { font-size:14px; }       .data-table th, .data-table td { padding:14px; }     }      /* ── WIDE DESKTOP ≥ 1200px ── */     @media (min-width:1200px) {       .main { max-width:1600px; }       .kpi-grid { gap:18px; }       .grid-2, .grid-3 { gap:18px; }     }      /* ── FOCUS VISIBLE (keyboard) ── */     .btn-refresh:focus-visible,     .topbar-link:focus-visible {       outline:3px solid var(--gold);       outline-offset:2px;     }  </style>
+</head>
+<body>
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="topbar-brand">
+      <img src="logo_encuesta.png" alt="BANGE" class="topbar-logo" width="32" height="32" />
+      <div class="topbar-text">
+        <div class="topbar-title">BANGE 2020–2025</div>
+        <div class="topbar-sub">Dashboard</div>
+      </div>
+    </div>
+    <div class="topbar-actions">
+      <span id="lastUpdate"></span>
+      <a href="index.html" class="topbar-link" title="Ir a la encuesta">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg>
+      </a>
+      <button class="btn-refresh" onclick="loadData()" title="Actualizar datos">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main class="main">
+
+    <!-- STATE SCREEN -->
+    <div id="stateScreen">
+      <div class="spinner"></div>
+      <h2>Cargando datos...</h2>
+      <p>Conectando con Google Sheets</p>
+    </div>
+
+    <!-- DASHBOARD CONTENT -->
+    <div id="dashContent" style="display:none">
+
+      <!-- KPIs -->
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-label">Total</div>
+          <div class="kpi-value" id="kpiTotal">—</div>
+          <div class="kpi-sub">respuestas</div>
+          <div class="kpi-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Empleados</div>
+          <div class="kpi-value" id="kpiEmpleados">—</div>
+          <div class="kpi-sub" id="kpiEmpleadosPct"></div>
+          <div class="kpi-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Clientes</div>
+          <div class="kpi-value" id="kpiClientes">—</div>
+          <div class="kpi-sub" id="kpiClientesPct"></div>
+          <div class="kpi-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Expertos</div>
+          <div class="kpi-value" id="kpiExpertos">—</div>
+          <div class="kpi-sub" id="kpiExpertosPct"></div>
+          <div class="kpi-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Valoración</div>
+          <div class="kpi-value" id="kpiValoracion">—</div>
+          <div class="kpi-sub">sobre 5</div>
+          <div class="kpi-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+        </div>
+      </div>
+
+      <!-- SECCIÓN I: PERFIL -->
+      <div class="sec-title">Sección I — Perfil</div>
+      <div class="grid-2">
+        <div class="chart-card">
+          <div class="card-head"><div><div class="card-title">Tipo de participante</div><div class="card-sub">P1</div></div><span class="card-badge" id="badgeTipo"></span></div>
+          <div class="chart-wrap"><canvas id="chartTipo"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="card-head"><div><div class="card-title">Género</div><div class="card-sub">P2</div></div><span class="card-badge" id="badgeGenero"></span></div>
+          <div class="chart-wrap"><canvas id="chartGenero"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="card-head"><div><div class="card-title">Rango de edad</div><div class="card-sub">P3</div></div><span class="card-badge" id="badgeEdad"></span></div>
+          <div class="chart-wrap"><canvas id="chartEdad"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="card-head"><div><div class="card-title">Nivel educativo</div><div class="card-sub">P4</div></div><span class="card-badge" id="badgeEducacion"></span></div>
+          <div class="chart-wrap"><canvas id="chartEducacion"></canvas></div>
+        </div>
+      </div>
+      <div class="grid-2" style="margin-top:14px">
+        <div class="chart-card">
+          <div class="card-head"><div><div class="card-title">Provincia</div><div class="card-sub">P5</div></div><span class="card-badge" id="badgeProvincia"></span></div>
+          <div class="chart-wrap chart-wrap-md"><canvas id="chartProvincia"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="card-head"><div><div class="card-title">Años con BANGE</div><div class="card-sub">P6</div></div><span class="card-badge" id="badgeAnos"></span></div>
+          <div class="chart-wrap"><canvas id="chartAnos"></canvas></div>
+        </div>
+      </div>
+
+      <!-- SECCIÓN II: CAPITAL HUMANO -->
+      <div class="sec-title">Sección II — Capital Humano</div>
+      <div class="grid-1">
+        <div class="chart-card">
+          <div class="card-head"><div><div class="card-title">Promedios — Capital Humano</div><div class="card-sub">P7–P13 · escala 1–5</div></div><span class="card-badge" id="badgeCH"></span></div>
+          <div class="chart-wrap chart-wrap-lg"><canvas id="chartCH"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="card-head"><div><div class="card-title">Resumen por dimensión</div></div></div>
+          <div class="pbar-list" id="pbarCH"></div>
+        </div>
+      </div>
+
+      <!-- SECCIÓN III: TRANSFORMACIÓN DIGITAL -->
+      <div class="sec-title">Sección III — Transformación Digital</div>
+      <div class="grid-2">
+        <div class="chart-card">
+          <div class="card-head"><div><div class="card-title">Uso de banca digital</div><div class="card-sub">P15</div></div><span class="card-badge" id="badgeP15"></span></div>
+          <div class="chart-wrap"><canvas id="chartP15"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="card-head"><div><div class="card-title">Promedios — Digital</div><div class="card-sub">P16–P22 · escala 1–5</div></div><span class="card-badge" id="badgeTD"></span></div>
+          <div class="chart-wrap chart-wrap-md"><canvas id="chartTD"></canvas></div>
+        </div>
+      </div>
+
+      <!-- SECCIÓN IV: GOBERNANZA -->
+      <div class="sec-title">Sección IV — Gobernanza Corporativa</div>
+      <div class="grid-1">
+        <div class="chart-card">
+          <div class="card-head"><div><div class="card-title">Promedios — Gobernanza</div><div class="card-sub">P24–P30 · escala 1–5</div></div><span class="card-badge" id="badgeGC"></span></div>
+          <div class="chart-wrap chart-wrap-lg"><canvas id="chartGC"></canvas></div>
+        </div>
+      </div>
+
+      <!-- SECCIÓN V: EXPANSIÓN -->
+      <div class="sec-title">Sección V — Expansión Operativa</div>
+      <div class="grid-1">
+        <div class="chart-card">
+          <div class="card-head"><div><div class="card-title">Promedios — Expansión</div><div class="card-sub">P31–P36 · escala 1–5</div></div><span class="card-badge" id="badgeEO"></span></div>
+          <div class="chart-wrap chart-wrap-md"><canvas id="chartEO"></canvas></div>
+        </div>
+      </div>
+
+      <!-- SECCIÓN VI: VALORACIÓN GLOBAL -->
+      <div class="sec-title">Sección VI — Valoración Global</div>
+      <div class="grid-3">
+        <div class="chart-card">
+          <div class="card-head"><div><div class="card-title">Valoración general</div><div class="card-sub">P37</div></div><span class="card-badge" id="badgeP37"></span></div>
+          <div class="chart-wrap"><canvas id="chartP37"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="card-head"><div><div class="card-title">Avance significativo</div><div class="card-sub">P38</div></div><span class="card-badge" id="badgeP38"></span></div>
+          <div class="chart-wrap"><canvas id="chartP38"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="card-head"><div><div class="card-title">Desafío pendiente</div><div class="card-sub">P39</div></div><span class="card-badge" id="badgeP39"></span></div>
+          <div class="chart-wrap"><canvas id="chartP39"></canvas></div>
+        </div>
+      </div>
+
+      <!-- RADAR COMPARATIVO -->
+      <div class="sec-title">Comparativa de dimensiones</div>
+      <div class="grid-2">
+        <div class="chart-card">
+          <div class="card-head"><div><div class="card-title">Radar — promedios</div><div class="card-sub">comparativa global</div></div></div>
+          <div class="chart-wrap chart-wrap-md"><canvas id="chartRadar"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="card-head"><div><div class="card-title">Resumen global</div></div></div>
+          <div class="pbar-list" id="pbarGlobal"></div>
+        </div>
+      </div>
+
+      <!-- TABLAS DE RESPUESTAS ABIERTAS -->
+      <div class="sec-title">Respuestas abiertas</div>
+      <div class="grid-2">
+        <div class="chart-card">
+          <div class="card-head"><div><div class="card-title">P14 — Áreas de formación a fortalecer</div><div class="card-sub" id="tableP14Count"></div></div></div>
+          <div class="table-wrap"><table class="data-table" id="tableP14"><thead><tr><th>Respuesta</th></tr></thead><tbody></tbody></table></div>
+        </div>
+        <div class="chart-card">
+          <div class="card-head"><div><div class="card-title">P23 — Funcionalidades a añadir</div><div class="card-sub" id="tableP23Count"></div></div></div>
+          <div class="table-wrap"><table class="data-table" id="tableP23"><thead><tr><th>Respuesta</th></tr></thead><tbody></tbody></table></div>
+        </div>
+      </div>
+
+      <!-- COMENTARIOS -->
+      <div class="sec-title">Comentarios y sugerencias</div>
+      <div class="chart-card">
+        <div class="card-head"><div><div class="card-title">P40 — Comentarios abiertos</div><div class="card-sub" id="commentCount"></div></div></div>
+        <div class="comments-list" id="commentsList"></div>
+      </div>
+
+    </div><!-- /dashContent -->
+  </main>
+
+
+<script>
+const SCRIPT_URL = 'PEGA_AQUI_TU_URL_DE_APPS_SCRIPT';
+const C = { navy:'#0f2d5e', navyL:'#1a3f7a', gold:'#c9a227', teal:'#0d9488', rose:'#e11d48', amber:'#d97706', violet:'#7c3aed', sky:'#0284c7', lime:'#65a30d', alpha:(h,a)=>h+Math.round(a*255).toString(16).padStart(2,'0') };
+const PALETTE = [C.navy, C.gold, C.teal, C.rose, C.amber, C.violet, C.sky, C.lime];
+const CH_LABELS = ['Capacitación','Desarrollo','Formación','Inversión','Competencias','Herramientas','Ambiente'];
+const TD_LABELS = ['Plataforma','Satisface','Éxito','Seguridad','Recomendaría','Canales','Facilita'];
+const GC_LABELS = ['Transparencia','Gestión','Confianza','Procesos','Normativas','Comunicación','Responde'];
+const EO_LABELS = ['Sucursales','Horarios','Ubicación','Cajeros','Tiempos','Accesibilidad'];
+const charts = {};
+
+function contar(arr) { return arr.reduce((acc,v)=>{if(v)acc[v]=(acc[v]||0)+1;return acc},{}); }
+function promedio(arr) { const nums=arr.map(Number).filter(n=>n>=1&&n<=5); return nums.length?(nums.reduce((a,b)=>a+b,0)/nums.length):0; }
+function pct(v,t) { return t?((v/t)*100).toFixed(1)+'%':'0%'; }
+function badge(el,n) { if(el)el.textContent=n+' resp.'; }
+
+function upsertChart(id,config) {
+  if(charts[id]){charts[id].destroy();}
+  const ctx=document.getElementById(id);
+  if(!ctx)return;
+  charts[id]=new Chart(ctx,config);
+}
+
+function donut(id,labels,values,badgeId) {
+  badge(document.getElementById(badgeId),values.reduce((a,b)=>a+b,0));
+  upsertChart(id,{
+    type:'doughnut',
+    data:{labels,datasets:[{data:values,backgroundColor:PALETTE,borderWidth:2,borderColor:'#fff',hoverOffset:6}]},
+    options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{position:'bottom',labels:{font:{size:11,family:'Inter'},padding:10,usePointStyle:true}},tooltip:{callbacks:{label:ctx=>` ${ctx.label}: ${ctx.raw} (${pct(ctx.raw,ctx.dataset.data.reduce((a,b)=>a+b,0))})`}}},cutout:'62%'}
+  });
+}
+
+function barH(id,labels,values,color,badgeId) {
+  badge(document.getElementById(badgeId),values.reduce((a,b)=>a+b,0));
+  upsertChart(id,{
+    type:'bar',
+    data:{labels,datasets:[{data:values,backgroundColor:C.alpha(color,0.85),borderRadius:6,borderSkipped:false}]},
+    options:{indexAxis:'y',responsive:true,maintainAspectRatio:true,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>` ${ctx.raw} respuestas`}}},scales:{x:{grid:{color:'#f3f4f6'},ticks:{font:{size:10}},beginAtZero:true},y:{grid:{display:false},ticks:{font:{size:10}}}}}
+  });
+}
+
+function barLikert(id,labels,avgs,color,badgeId) {
+  const total=avgs.filter(v=>v>0).length;
+  badge(document.getElementById(badgeId),total+' items');
+  upsertChart(id,{
+    type:'bar',
+    data:{labels,datasets:[{label:'Promedio (1–5)',data:avgs.map(v=>v?+v.toFixed(2):null),backgroundColor:avgs.map(v=>v>=4?C.alpha(C.teal,0.85):v>=3?C.alpha(color,0.85):C.alpha(C.rose,0.75)),borderRadius:8,borderSkipped:false}]},
+    options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>` Promedio: ${ctx.raw}`}}},scales:{y:{min:0,max:5,grid:{color:'#f3f4f6'},ticks:{font:{size:10}}},x:{grid:{display:false},ticks:{font:{size:10},maxRotation:45}}}}
+  });
+}
+
+function radar(id,labels,datasets) {
+  upsertChart(id,{
+    type:'radar',
+    data:{labels,datasets:datasets.map((d,i)=>({label:d.label,data:d.data,backgroundColor:C.alpha(PALETTE[i],0.15),borderColor:PALETTE[i],borderWidth:2,pointBackgroundColor:PALETTE[i],pointRadius:4}))},
+    options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{position:'bottom',labels:{font:{size:11},usePointStyle:true}}},scales:{r:{min:0,max:5,ticks:{stepSize:1,font:{size:9}},grid:{color:'#e5e7eb'},pointLabels:{font:{size:10}}}}}
+  });
+}
+
+function renderPbars(containerId,items) {
+  const el=document.getElementById(containerId);
+  if(!el)return;
+  el.innerHTML=items.map(({label,value})=>`<div class="pbar-item"><div class="pbar-label">${label}<span>${value?value.toFixed(2):'—'} / 5</span></div><div class="pbar-track"><div class="pbar-fill" style="width:${value?(value/5*100).toFixed(1):0}%"></div></div></div>`).join('');
+}
+
+function renderComments(comments) {
+  const list=document.getElementById('commentsList');
+  const count=document.getElementById('commentCount');
+  const filtered=comments.filter(c=>c&&c.trim().length>2);
+  if(count)count.textContent=filtered.length+' comentarios';
+  if(!list)return;
+  if(!filtered.length){list.innerHTML='<div class="empty-state">No hay comentarios aún.</div>';return;}
+  list.innerHTML=filtered.map(c=>`<div class="comment-item">${c}</div>`).join('');
+}
+
+function renderTable(tableId, countId, data) {
+  const table=document.getElementById(tableId);
+  const count=document.getElementById(countId);
+  if(!table)return;
+  const tbody=table.querySelector('tbody');
+  const filtered=data.filter(d=>d&&d.trim().length>2);
+  if(count)count.textContent=filtered.length+' respuestas';
+  if(!filtered.length){tbody.innerHTML='<tr><td class="table-empty">Sin respuestas aún.</td></tr>';return;}
+  
+  // Paginación: mostrar solo primeras 10 filas
+  const pageSize=10;
+  const displayed=filtered.slice(0,pageSize);
+  tbody.innerHTML=displayed.map(d=>`<tr><td>${d}</td></tr>`).join('');
+  
+  // Si hay más de 10, agregar botón para ver más
+  if(filtered.length>pageSize){
+    const moreBtn=document.createElement('tr');
+    moreBtn.innerHTML=`<td style="text-align:center;padding:10px"><button onclick="expandTable('${tableId}',${filtered.length})" style="padding:6px 12px;background:#0f2d5e;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:12px">Ver más (${filtered.length-pageSize} restantes)</button></td>`;
+    tbody.appendChild(moreBtn);
+  }
+}
+
+function expandTable(tableId,total){
+  const table=document.getElementById(tableId);
+  const tbody=table.querySelector('tbody');
+  const rows=Array.from(tbody.querySelectorAll('tr')).slice(0,-1);
+  const data=rows.map(r=>r.querySelector('td').textContent);
+  const allData=Array.from(tbody.querySelectorAll('tr')).map(r=>r.querySelector('td').textContent);
+  tbody.innerHTML=allData.map(d=>`<tr><td>${d}</td></tr>`).join('');
+}
+
+function renderKPIs(rows) {
+  const total=rows.length;
+  const tipos=contar(rows.map(r=>r.p1));
+  const emp=tipos['Empleado de BANGE']||0;
+  const cli=tipos['Cliente de BANGE']||0;
+  const exp=tipos['Experto del sector financiero']||0;
+  const valMap={'Muy positiva':5,'Positiva':4,'Neutral':3,'Negativa':2,'Muy negativa':1};
+  const valNums=rows.map(r=>valMap[r.p37]).filter(Boolean);
+  const valMedia=valNums.length?(valNums.reduce((a,b)=>a+b,0)/valNums.length).toFixed(1):'—';
+  document.getElementById('kpiTotal').textContent=total;
+  document.getElementById('kpiEmpleados').textContent=emp;
+  document.getElementById('kpiEmpleadosPct').textContent=pct(emp,total)+' del total';
+  document.getElementById('kpiClientes').textContent=cli;
+  document.getElementById('kpiClientesPct').textContent=pct(cli,total)+' del total';
+  document.getElementById('kpiExpertos').textContent=exp;
+  document.getElementById('kpiExpertosPct').textContent=pct(exp,total)+' del total';
+  document.getElementById('kpiValoracion').textContent=valMedia;
+}
+
+function renderAll(rows) {
+  if(!rows.length){showState('📭','Sin respuestas aún','Cuando los participantes envíen la encuesta, los datos aparecerán aquí.');return;}
+  
+  // Renderizar KPIs inmediatamente
+  renderKPIs(rows);
+  
+  // Renderizar gráficos con lazy loading
+  const chartConfigs=[
+    {id:'chartTipo',fn:()=>{const tipos=contar(rows.map(r=>r.p1));donut('chartTipo',Object.keys(tipos),Object.values(tipos),'badgeTipo');}},
+    {id:'chartGenero',fn:()=>{const generos=contar(rows.map(r=>r.p2));donut('chartGenero',Object.keys(generos),Object.values(generos),'badgeGenero');}},
+    {id:'chartEdad',fn:()=>{const edades=contar(rows.map(r=>r.p3));const edadOrder=['18-30','31-45','46-60','60+'];const edadLabels=edadOrder.filter(k=>edades[k]);barH('chartEdad',edadLabels,edadLabels.map(k=>edades[k]||0),C.navy,'badgeEdad');}},
+    {id:'chartEducacion',fn:()=>{const educ=contar(rows.map(r=>r.p4));barH('chartEducacion',Object.keys(educ),Object.values(educ),C.teal,'badgeEducacion');}},
+    {id:'chartProvincia',fn:()=>{const provs=contar(rows.map(r=>r.p5));barH('chartProvincia',Object.keys(provs),Object.values(provs),C.gold,'badgeProvincia');}},
+    {id:'chartAnos',fn:()=>{const anos=contar(rows.map(r=>r.p6));donut('chartAnos',Object.keys(anos),Object.values(anos),'badgeAnos');}},
+    {id:'chartCH',fn:()=>{const empRows=rows.filter(r=>(r.p1||'').includes('Empleado'));const chAvgs=[0,1,2,3,4,5,6].map(i=>promedio(empRows.map(r=>r[`ch_${i}`])));barLikert('chartCH',CH_LABELS,chAvgs,C.navy,'badgeCH');renderPbars('pbarCH',CH_LABELS.map((l,i)=>({label:l,value:chAvgs[i]})));}},
+    {id:'chartP15',fn:()=>{const p15=contar(rows.map(r=>r.p15));donut('chartP15',Object.keys(p15),Object.values(p15),'badgeP15');}},
+    {id:'chartTD',fn:()=>{const tdRows=rows.filter(r=>(r.p15||'').startsWith('Sí'));const tdAvgs=[0,1,2,3,4,5,6].map(i=>promedio(tdRows.map(r=>r[`td_${i}`])));barLikert('chartTD',TD_LABELS,tdAvgs,C.teal,'badgeTD');}},
+    {id:'chartGC',fn:()=>{const gcAvgs=[0,1,2,3,4,5,6].map(i=>promedio(rows.map(r=>r[`gc_${i}`])));barLikert('chartGC',GC_LABELS,gcAvgs,C.violet,'badgeGC');}},
+    {id:'chartEO',fn:()=>{const eoAvgs=[0,1,2,3,4,5].map(i=>promedio(rows.map(r=>r[`eo_${i}`])));barLikert('chartEO',EO_LABELS,eoAvgs,C.amber,'badgeEO');}},
+    {id:'chartP37',fn:()=>{const p37=contar(rows.map(r=>r.p37));const p37Order=['Muy positiva','Positiva','Neutral','Negativa','Muy negativa'];const p37L=p37Order.filter(k=>p37[k]);donut('chartP37',p37L,p37L.map(k=>p37[k]||0),'badgeP37');}},
+    {id:'chartP38',fn:()=>{const p38=contar(rows.map(r=>r.p38));barH('chartP38',Object.keys(p38),Object.values(p38),C.gold,'badgeP38');}},
+    {id:'chartP39',fn:()=>{const p39=contar(rows.map(r=>r.p39));barH('chartP39',Object.keys(p39),Object.values(p39),C.rose,'badgeP39');}},
+    {id:'chartRadar',fn:()=>{const empRows=rows.filter(r=>(r.p1||'').includes('Empleado'));const chAvgs=[0,1,2,3,4,5,6].map(i=>promedio(empRows.map(r=>r[`ch_${i}`])));const tdRows=rows.filter(r=>(r.p15||'').startsWith('Sí'));const tdAvgs=[0,1,2,3,4,5,6].map(i=>promedio(tdRows.map(r=>r[`td_${i}`])));const gcAvgs=[0,1,2,3,4,5,6].map(i=>promedio(rows.map(r=>r[`gc_${i}`])));const eoAvgs=[0,1,2,3,4,5].map(i=>promedio(rows.map(r=>r[`eo_${i}`])));const chMedia=chAvgs.filter(v=>v>0).reduce((a,b)=>a+b,0)/(chAvgs.filter(v=>v>0).length||1);const tdMedia=tdAvgs.filter(v=>v>0).reduce((a,b)=>a+b,0)/(tdAvgs.filter(v=>v>0).length||1);const gcMedia=gcAvgs.filter(v=>v>0).reduce((a,b)=>a+b,0)/(gcAvgs.filter(v=>v>0).length||1);const eoMedia=eoAvgs.filter(v=>v>0).reduce((a,b)=>a+b,0)/(eoAvgs.filter(v=>v>0).length||1);radar('chartRadar',['Capital\nHumano','Digital','Gobernanza','Expansión'],[{label:'Promedio',data:[+chMedia.toFixed(2),+tdMedia.toFixed(2),+gcMedia.toFixed(2),+eoMedia.toFixed(2)]}]);renderPbars('pbarGlobal',[{label:'Capital Humano',value:chMedia},{label:'Transformación Digital',value:tdMedia},{label:'Gobernanza Corporativa',value:gcMedia},{label:'Expansión Operativa',value:eoMedia}]);}},
+    {id:'tableP14',fn:()=>{renderTable('tableP14','tableP14Count',rows.map(r=>r.p14));}},
+    {id:'tableP23',fn:()=>{renderTable('tableP23','tableP23Count',rows.map(r=>r.p23));}},
+    {id:'commentsList',fn:()=>{renderComments(rows.map(r=>r.p40));}}
+  ];
+  
+  // Lazy load con Intersection Observer
+  const observer=new IntersectionObserver((entries)=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting){
+        const config=chartConfigs.find(c=>c.id===entry.target.id);
+        if(config){config.fn();observer.unobserve(entry.target);}
+      }
+    });
+  },{rootMargin:'100px'});
+  
+  chartConfigs.forEach(c=>{
+    const el=document.getElementById(c.id);
+    if(el)observer.observe(el);
+  });
+  
+  document.getElementById('stateScreen').style.display='none';
+  document.getElementById('dashContent').style.display='block';
+  const lu=document.getElementById('lastUpdate');
+  if(lu)lu.textContent='Actualizado: '+new Date().toLocaleTimeString('es-ES');
+}
+
+function showState(emoji,title,msg) {
+  document.getElementById('dashContent').style.display='none';
+  const s=document.getElementById('stateScreen');
+  s.style.display='flex';
+  s.innerHTML=`<div style="font-size:40px">${emoji}</div><h2>${title}</h2><p>${msg}</p>`;
+}
+
+async function loadData() {
+  document.getElementById('dashContent').style.display='none';
+  document.getElementById('stateScreen').style.display='flex';
+  document.getElementById('stateScreen').innerHTML='<div class="spinner"></div><h2>Cargando datos...</h2><p>Conectando con Google Sheets</p>';
+  
+  if(SCRIPT_URL==='PEGA_AQUI_TU_URL_DE_APPS_SCRIPT'){renderAll(getDemoData());return;}
+  
+  try{
+    // Intentar usar caché local primero
+    const cached=getCachedData();
+    if(cached){
+      renderAll(cached);
+      loadDataBackground();
+      return;
+    }
+    
+    const res=await fetch(SCRIPT_URL+'?action=data&t='+Date.now());
+    if(!res.ok)throw new Error('HTTP '+res.status);
+    const json=await res.json();
+    if(json.status==='error')throw new Error(json.message);
+    
+    const rows=json.rows||[];
+    setCachedData(rows);
+    renderAll(rows);
+  }catch(err){
+    showState('⚠️','Error al cargar datos','Verifica que la URL de Apps Script es correcta. Detalle: '+err.message);
+  }
+}
+
+function getCachedData(){
+  try{
+    const cached=localStorage.getItem('bange_cache');
+    if(!cached)return null;
+    const {data,timestamp}=JSON.parse(cached);
+    if(Date.now()-timestamp>5*60*1000)return null; // 5 min TTL
+    return data;
+  }catch(e){return null;}
+}
+
+function setCachedData(data){
+  try{
+    localStorage.setItem('bange_cache',JSON.stringify({data,timestamp:Date.now()}));
+  }catch(e){}
+}
+
+function loadDataBackground(){
+  if(SCRIPT_URL==='https://script.google.com/macros/s/AKfycbwlq4UjMKDZIv9eDBgyVSRvxMw2w3xIkWniz9Q1-js5P28alxo1CkLO5kZ7qbYjSX5U/exec')return;
+  fetch(SCRIPT_URL+'?action=data&t='+Date.now()).then(r=>r.json()).then(j=>{
+    if(j.status==='ok'){setCachedData(j.rows||[]);}
+  }).catch(e=>{});
+}
+
+function getDemoData() {
+  const tipos=['Empleado de BANGE','Cliente de BANGE','Experto del sector financiero'];
+  const generos=['Masculino','Femenino','Prefiero no decir'];
+  const edades=['18-30','31-45','46-60','60+'];
+  const educ=['Educación secundaria','Formación técnica o profesional','Licenciatura / Grado universitario','Postgrado (Máster / Doctorado)'];
+  const provs=['Bioko Norte (Malabo)','Bioko Sur','Litoral (Bata)','Centro Sur','Kié-Ntem','Wele-Nzas','Annobón','Djibloho'];
+  const anos=['2-5','6-10','10+'];
+  const p15opts=['Sí, frecuentemente','Sí, ocasionalmente','No, pero conozco los servicios','No, y los desconozco'];
+  const p37opts=['Muy positiva','Positiva','Neutral','Negativa','Muy negativa'];
+  const p38opts=['Capacitación del personal','Transformación digital','Gobernanza institucional','Expansión de servicios','Otro'];
+  const p39opts=['Formación del personal','Mejora de servicios digitales','Transparencia y comunicación','Cobertura territorial','Reducción de tiempos de espera','Otro'];
+  const comments=['Excelente iniciativa de modernización.','Los cajeros automáticos necesitan mejora urgente.','La app móvil es muy útil pero falla a veces.','Buen trabajo en general, seguir mejorando.','Necesitamos más sucursales en el interior.','La atención al cliente ha mejorado notablemente.'];
+  const rnd=(arr)=>arr[Math.floor(Math.random()*arr.length)];
+  const rndV=()=>String(Math.floor(Math.random()*3)+3);
+  return Array.from({length:42},(_,i)=>{
+    const tipo=rnd(tipos);
+    const usaDigital=rnd(p15opts);
+    return{p1:tipo,p2:rnd(generos),p3:rnd(edades),p4:rnd(educ),p5:rnd(provs),p6:rnd(anos),ch_0:tipo.includes('Empleado')?rndV():'',ch_1:tipo.includes('Empleado')?rndV():'',ch_2:tipo.includes('Empleado')?rndV():'',ch_3:tipo.includes('Empleado')?rndV():'',ch_4:tipo.includes('Empleado')?rndV():'',ch_5:tipo.includes('Empleado')?rndV():'',ch_6:tipo.includes('Empleado')?rndV():'',p15:usaDigital,td_0:usaDigital.startsWith('Sí')?rndV():'',td_1:usaDigital.startsWith('Sí')?rndV():'',td_2:usaDigital.startsWith('Sí')?rndV():'',td_3:usaDigital.startsWith('Sí')?rndV():'',td_4:usaDigital.startsWith('Sí')?rndV():'',td_5:usaDigital.startsWith('Sí')?rndV():'',td_6:usaDigital.startsWith('Sí')?rndV():'',gc_0:rndV(),gc_1:rndV(),gc_2:rndV(),gc_3:rndV(),gc_4:rndV(),gc_5:rndV(),gc_6:rndV(),eo_0:rndV(),eo_1:rndV(),eo_2:rndV(),eo_3:rndV(),eo_4:rndV(),eo_5:rndV(),p37:rnd(p37opts),p38:rnd(p38opts),p39:rnd(p39opts),p40:i%7===0?rnd(comments):''};
+  });
+}
+
+document.addEventListener('DOMContentLoaded',loadData);
+</script>
+</body>
+</html>
+
