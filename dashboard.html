@@ -435,7 +435,7 @@ function setCachedData(data){
 }
 
 function loadDataBackground(){
-  if(SCRIPT_URL==='https://script.google.com/macros/s/AKfycbwlq4UjMKDZIv9eDBgyVSRvxMw2w3xIkWniz9Q1-js5P28alxo1CkLO5kZ7qbYjSX5U/exec')return;
+  if(SCRIPT_URL==='PEGA_AQUI_TU_URL_DE_APPS_SCRIPT')return;
   fetch(SCRIPT_URL+'?action=data&t='+Date.now()).then(r=>r.json()).then(j=>{
     if(j.status==='ok'){setCachedData(j.rows||[]);}
   }).catch(e=>{});
