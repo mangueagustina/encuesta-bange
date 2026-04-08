@@ -210,7 +210,7 @@
 
 
 <script>
-const SCRIPT_URL = 'PEGA_AQUI_TU_URL_DE_APPS_SCRIPT';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwlq4UjMKDZIv9eDBgyVSRvxMw2w3xIkWniz9Q1-js5P28alxo1CkLO5kZ7qbYjSX5U/exec';
 const C = { navy:'#0f2d5e', navyL:'#1a3f7a', gold:'#c9a227', teal:'#0d9488', rose:'#e11d48', amber:'#d97706', violet:'#7c3aed', sky:'#0284c7', lime:'#65a30d', alpha:(h,a)=>h+Math.round(a*255).toString(16).padStart(2,'0') };
 const PALETTE = [C.navy, C.gold, C.teal, C.rose, C.amber, C.violet, C.sky, C.lime];
 const CH_LABELS = ['Capacitación','Desarrollo','Formación','Inversión','Competencias','Herramientas','Ambiente'];
@@ -394,7 +394,7 @@ async function loadData() {
   document.getElementById('stateScreen').style.display='flex';
   document.getElementById('stateScreen').innerHTML='<div class="spinner"></div><h2>Cargando datos...</h2><p>Conectando con Google Sheets</p>';
   
-  if(SCRIPT_URL==='PEGA_AQUI_TU_URL_DE_APPS_SCRIPT'){renderAll(getDemoData());return;}
+  if(SCRIPT_URL==='https://script.google.com/macros/s/AKfycbwlq4UjMKDZIv9eDBgyVSRvxMw2w3xIkWniz9Q1-js5P28alxo1CkLO5kZ7qbYjSX5U/exec'){renderAll(getDemoData());return;}
   
   try{
     // Intentar usar caché local primero
