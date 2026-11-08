@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Encuesta Cerrada - Estudio BANGE</title>
+  <link rel="icon" type="image/png" href="logo_encuesta.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html {
+      height: 100%;
+      overflow: hidden;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #0f2d5e 0%, #1a4d8f 100%);
+      color: #1f2937;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2vh 2vw;
+      -webkit-font-smoothing: antialiased;
+      overflow: hidden;
+    }
+
+    .container {
+      max-width: 90vw;
+      max-height: 96vh;
+      width: 580px;
+      background: white;
+      border-radius: clamp(16px, 2vw, 24px);
+      padding: clamp(20px, 3vh, 36px) clamp(20px, 3vw, 36px);
+      box-shadow: 0 20px 60px rgba(0,0,0,.25), 0 0 0 1px rgba(255,255,255,.1) inset;
+      text-align: center;
+      animation: fadeIn 0.6s ease-out;
+      position: relative;
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+
+    .container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #c9a227 0%, #f3c559 100%);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .logo-wrapper {
+      width: clamp(60px, 8vw, 80px);
+      height: clamp(60px, 8vw, 80px);
+      margin: 0 auto clamp(12px, 2vh, 20px);
+      background: linear-gradient(135deg, #0f2d5e 0%, #1a4d8f 100%);
+      border-radius: clamp(14px, 2vw, 20px);
+      padding: clamp(8px, 1.5vw, 12px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 24px rgba(15,45,94,.2);
+    }
+
+    .logo-wrapper img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .icon-circle {
+      width: clamp(56px, 8vw, 72px);
+      height: clamp(56px, 8vw, 72px);
+      margin: 0 auto clamp(12px, 2vh, 18px);
+      background: linear-gradient(135deg, #c9a227 0%, #f3c559 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 24px rgba(201,162,39,.25);
+    }
+
+    .icon-circle svg {
+      width: clamp(24px, 4vw, 32px);
+      height: clamp(24px, 4vw, 32px);
+      fill: white;
+    }
+
+    h1 {
+      font-size: clamp(20px, 4vw, 28px);
+      font-weight: 700;
+      color: #0f2d5e;
+      margin-bottom: clamp(8px, 1.5vh, 12px);
+      line-height: 1.2;
+      letter-spacing: -0.5px;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+      color: #92400e;
+      font-size: clamp(11px, 1.8vw, 13px);
+      font-weight: 600;
+      padding: clamp(6px, 1vh, 8px) clamp(14px, 2.5vw, 18px);
+      border-radius: 24px;
+      margin-bottom: clamp(14px, 2vh, 20px);
+      border: 1px solid #fbbf24;
+      box-shadow: 0 2px 8px rgba(251,191,36,.15);
+    }
+
+    .status-badge svg {
+      width: clamp(13px, 2vw, 15px);
+      height: clamp(13px, 2vw, 15px);
+      fill: #92400e;
+    }
+
+    p {
+      font-size: clamp(13px, 2vw, 15px);
+      color: #4b5563;
+      line-height: 1.6;
+      margin-bottom: clamp(8px, 1.5vh, 12px);
+    }
+
+    .stats {
+      background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+      border: 1px solid #e5e7eb;
+      border-radius: clamp(12px, 2vw, 16px);
+      padding: clamp(16px, 2.5vh, 22px) clamp(14px, 2.5vw, 20px);
+      margin: clamp(16px, 2.5vh, 24px) 0;
+      box-shadow: 0 4px 12px rgba(0,0,0,.03);
+    }
+
+    .stats-header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: clamp(11px, 1.8vw, 13px);
+      font-weight: 600;
+      color: #6b7280;
+      margin-bottom: clamp(10px, 1.5vh, 14px);
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+    }
+
+    .stats-header svg {
+      width: clamp(14px, 2vw, 16px);
+      height: clamp(14px, 2vw, 16px);
+      fill: #6b7280;
+    }
+
+    .stat-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: clamp(8px, 1.2vh, 11px) 0;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .stat-item:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .stat-label {
+      font-size: clamp(12px, 1.9vw, 14px);
+      color: #374151;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .stat-label svg {
+      width: clamp(16px, 2.5vw, 18px);
+      height: clamp(16px, 2.5vw, 18px);
+      fill: #9ca3af;
+    }
+
+    .stat-value {
+      font-size: clamp(16px, 3vw, 20px);
+      font-weight: 700;
+      color: #0f2d5e;
+      letter-spacing: -0.3px;
+    }
+
+    .thank-you {
+      background: linear-gradient(135deg, #0f2d5e 0%, #1a4d8f 100%);
+      color: white;
+      padding: clamp(16px, 2.5vh, 22px) clamp(14px, 2.5vw, 20px);
+      border-radius: clamp(12px, 2vw, 16px);
+      margin-top: clamp(16px, 2.5vh, 24px);
+      box-shadow: 0 12px 32px rgba(15,45,94,.3);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .thank-you::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -20%;
+      width: 200px;
+      height: 200px;
+      background: radial-gradient(circle, rgba(201,162,39,.15) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+
+    .thank-you-header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: clamp(6px, 1vh, 8px);
+    }
+
+    .thank-you-header svg {
+      width: clamp(18px, 3vw, 22px);
+      height: clamp(18px, 3vw, 22px);
+      fill: #c9a227;
+    }
+
+    .thank-you h2 {
+      font-size: clamp(16px, 2.8vw, 20px);
+      font-weight: 700;
+      letter-spacing: -0.3px;
+    }
+
+    .thank-you p {
+      color: rgba(255,255,255,0.92);
+      font-size: clamp(12px, 1.9vw, 14px);
+      margin: 0;
+      line-height: 1.6;
+    }
+
+    .footer {
+      margin-top: clamp(16px, 2.5vh, 24px);
+      padding-top: clamp(12px, 2vh, 18px);
+      border-top: 1px solid #e5e7eb;
+      font-size: clamp(11px, 1.7vw, 12px);
+      color: #9ca3af;
+      line-height: 1.5;
+    }
+
+    .footer strong {
+      display: block;
+      color: #374151;
+      font-size: clamp(12px, 1.8vw, 13px);
+      margin-bottom: 3px;
+    }
+
+    @media (max-width: 640px) {
+      body {
+        padding: 1vh 1vw;
+      }
+
+      .container {
+        max-width: 96vw;
+        max-height: 98vh;
+        padding: clamp(16px, 2.5vh, 24px) clamp(16px, 3vw, 22px);
+        border-radius: 16px;
+      }
+    }
+
+    @media (max-height: 700px) {
+      .container {
+        padding: clamp(12px, 2vh, 20px) clamp(16px, 2.5vw, 24px);
+      }
+
+      .logo-wrapper {
+        width: clamp(48px, 6vw, 64px);
+        height: clamp(48px, 6vw, 64px);
+        margin-bottom: clamp(8px, 1.5vh, 14px);
+      }
+
+      .icon-circle {
+        width: clamp(44px, 6vw, 56px);
+        height: clamp(44px, 6vw, 56px);
+        margin-bottom: clamp(8px, 1.5vh, 12px);
+      }
+
+      p {
+        margin-bottom: clamp(6px, 1vh, 10px);
+      }
+
+      .stats {
+        padding: clamp(12px, 2vh, 16px) clamp(12px, 2vw, 16px);
+        margin: clamp(12px, 2vh, 18px) 0;
+      }
+
+      .stat-item {
+        padding: clamp(6px, 1vh, 8px) 0;
+      }
+
+      .thank-you {
+        padding: clamp(12px, 2vh, 16px) clamp(12px, 2vw, 16px);
+        margin-top: clamp(12px, 2vh, 18px);
+      }
+
+      .footer {
+        margin-top: clamp(12px, 2vh, 16px);
+        padding-top: clamp(8px, 1.5vh, 12px);
+      }
+    }
+
+    /* Scrollbar personalizada para el contenedor */
+    .container::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .container::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 10px;
+    }
+
+    .container::-webkit-scrollbar-thumb {
+      background: #c9a227;
+      border-radius: 10px;
+    }
+
+    .container::-webkit-scrollbar-thumb:hover {
+      background: #b08920;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Logo BANGE -->
+    <div class="logo-wrapper">
+      <img src="logo_encuesta.png" alt="BANGE Logo" onerror="this.style.display='none'" />
+    </div>
+
+    <!-- Icono de Candado (SVG) -->
+    <div class="icon-circle">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2C9.243 2 7 4.243 7 7v3H6c-1.103 0-2 .897-2 2v8c0 1.103.897 2 2 2h12c1.103 0 2-.897 2-2v-8c0-1.103-.897-2-2-2h-1V7c0-2.757-2.243-5-5-5zm-3 5c0-1.654 1.346-3 3-3s3 1.346 3 3v3H9V7zm3 10c-1.103 0-2-.897-2-2s.897-2 2-2 2 .897 2 2-.897 2-2 2z"/>
+      </svg>
+    </div>
+
+    <h1>Encuesta Cerrada</h1>
+
+    <!-- Badge con icono SVG de check -->
+    <span class="status-badge">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+      </svg>
+      Recopilación de Datos Finalizada
+    </span>
+
+    <p>
+      Gracias por su interés en el estudio académico sobre el Fortalecimiento de Capacidades 
+      del Banco Nacional de Guinea Ecuatorial (BANGE) durante el período 2020–2025.
+    </p>
+
+    <p>
+      <strong>El período de recopilación de datos ha concluido exitosamente.</strong>
+    </p>
+
+    <!-- Estadísticas con iconos SVG -->
+    <div class="stats">
+      <div class="stats-header">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M3 3v18h18M7 14l4-4 4 4 6-6"/>
+        </svg>
+        Resultados de la Encuesta
+      </div>
+      
+      <div class="stat-item">
+        <span class="stat-label">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
+          </svg>
+          Total de Participantes
+        </span>
+        <span class="stat-value">187</span>
+      </div>
+      
+      <div class="stat-item">
+        <span class="stat-label">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/>
+          </svg>
+          Empleados
+        </span>
+        <span class="stat-value">56</span>
+      </div>
+      
+      <div class="stat-item">
+        <span class="stat-label">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
+          </svg>
+          Clientes
+        </span>
+        <span class="stat-value">76</span>
+      </div>
+      
+      <div class="stat-item">
+        <span class="stat-label">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M22 10v6M2 10l10-5 10 5-10 5zM6 12v5c3 2 7 2 10 0v-5"/>
+          </svg>
+          Expertos del Sector
+        </span>
+        <span class="stat-value">55</span>
+      </div>
+    </div>
+
+    <!-- Agradecimiento -->
+    <div class="thank-you">
+      <div class="thank-you-header">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+        </svg>
+        <h2>¡Muchas Gracias!</h2>
+      </div>
+      <p>
+        Su participación ha sido fundamental para completar este Trabajo de Fin de Grado. 
+        Los datos recopilados serán analizados con el máximo rigor académico.
+      </p>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      <strong>Trabajo de Fin de Grado</strong>
+      Agustina Mangue Nguema · AAUCA<br>
+      Grado en Administración de Empresas
+    </div>
+  </div>
+</body>
+</html>
